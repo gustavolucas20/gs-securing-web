@@ -1,0 +1,24 @@
+image: docker:26.1.4
+
+
+stages:
+- test
+- secret-detection
+
+gradle_test:
+  stage: test
+  image: gradle:jdk21-alpine
+  before_script:
+   - cd initial
+  script:
+   - gradle test
+
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
+- template: Security/Secret-Detection.gitlab-ci.yml
+variables:
+  SECRET_DETECTION_ENABLED: 'true'
+secret_detection:
+  stage: secret-detection
